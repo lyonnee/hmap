@@ -35,17 +35,17 @@ func (m *Map[K, V]) Load(key K) (V, bool) {
 }
 
 func (m *Map[K, V]) Swap(k K, v V) (V, bool) {
-	var ret V
+	var ret = v
 	previous, loaded := m.d.Swap(k, v)
 	if !loaded {
 		// not exist, len +1
 		m.l.Add(1)
-		ret = v
 	} else {
 		if previous != nil {
 			ret = previous.(V)
 		}
 	}
+
 	return ret, loaded
 }
 
@@ -58,7 +58,7 @@ func (m *Map[K, V]) Store(k K, v V) {
 }
 
 func (m *Map[K, V]) LoadOrStore(k K, v V) (V, bool) {
-	var ret V
+	var ret = v
 	d, ok := m.d.LoadOrStore(k, v)
 	if !ok {
 		if d != nil {
@@ -67,8 +67,6 @@ func (m *Map[K, V]) LoadOrStore(k K, v V) (V, bool) {
 		// not exist, len +1
 		m.l.Add(1)
 	}
-
-	ret = v
 
 	return ret, ok
 }
