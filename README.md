@@ -22,6 +22,10 @@ HMap is a safe for concurrent generic map implementation in Go that provides a s
 
 ## Quick Start
 
+### Using `Map`
+
+`Map` is a concurrent-safe map implementation based on a mutex.
+
 ```go
 package main
 
@@ -31,12 +35,12 @@ import (
 )
 
 func main() {
-	// Create a new HMap instance
-	myMap := hmap.New[int, string]()
+	// Create a new Map instance
+	myMap := hmap.NewMap[string, int](10)
 
 	// Store key-value pairs
-	myMap.Store(1, "One")
-	myMap.Store(2, "Two")
+	myMap.Store("key1", 1)
+	myMap.Store("key2", 2)
 
 	// Query the length of the map
 	length := myMap.Len()
@@ -50,6 +54,54 @@ func main() {
 	fmt.Printf("Map Length after Clean: %d\n", length)
 }
 ```
+
+### Using `SyncMap`
+
+`SyncMap` is a concurrent-safe map implementation based on sync.Map.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/lyonnee/hmap"
+)
+
+func main() {
+	// Create a new SyncMap instance
+	mySyncMap := hmap.NewSyncMap[string, int]()
+
+	// Store key-value pairs
+	mySyncMap.Store("key1", 1)
+	mySyncMap.Store("key2", 2)
+
+	// Query the length of the map
+	length := mySyncMap.Len()
+	fmt.Printf("SyncMap Length: %d\n", length)
+
+	// Clear the map
+	mySyncMap.Clean()
+
+	// Query the length of the map after cleaning
+	length = mySyncMap.Len()
+	fmt.Printf("SyncMap Length after Clean: %d\n", length)
+}
+```
+
+## Comparison of `Map` and `SyncMap`
+### Map
+- Advantages:
+	- mplemented using a mutex, simple and intuitive.
+	- Suitable for scenarios with low concurrency read/write operations.
+- Disadvantages:
+	- Performance may be lower than `SyncMap` in high-concurrency write scenarios, as the mutex causes write operations to block.
+### SyncMap
+- Advantages:
+	- Implemented using sync.Map, suitable for high-concurrency scenarios.
+	- Write operations do not block read operations, providing better performance.
+- Disadvantages:
+	- Implementation is more complex and has a larger codebase.
+	- Performance may be lower than `Map` in low-concurrency scenarios.
 
 ## Methods
 
@@ -85,7 +137,7 @@ Deletes the value associated with the specified key. If the key exists, the leng
 
 Loads and deletes the value associated with the specified key. If the key exists, the length is decremented.
 
-### `Range(fn func(k any, v any) bool)`
+### `Range(fn func(k K, v V) bool)`
 
 Iterates over the map, applying a given function to each key-value pair.
 

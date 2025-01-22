@@ -22,32 +22,86 @@ HMap 是一个并发安全的支持泛型的Map实现，旨在提供简单易用
 
 ## 快速开始
 
+### 使用 `Map`
+
+`Map` 是一个基于互斥锁的并发安全 Map 实现。
+
 ```go
+package main
+
 import (
 	"fmt"
 	"github.com/lyonnee/hmap"
 )
 
 func main() {
-	// 创建一个新的 HMap
-	myMap := hmap.New[int, string]()
+	// 创建一个新的 Map 实例
+	myMap := hmap.NewMap[string, int](10)
 
 	// 存储键值对
-	myMap.Store(1, "One")
-	myMap.Store(2, "Two")
+	myMap.Store("key1", 1)
+	myMap.Store("key2", 2)
 
-	// 查询映射长度
+	// 查询 Map 的长度
 	length := myMap.Len()
 	fmt.Printf("Map Length: %d\n", length)
 
-	// 清空映射
+	// 清空 Map
 	myMap.Clean()
 
-	// 再次查询映射长度
+	// 查询清空后的 Map 长度
 	length = myMap.Len()
 	fmt.Printf("Map Length after Clean: %d\n", length)
 }
 ```
+
+### 使用 `SyncMap`
+
+`SyncMap` 是一个基于 sync.Map 的并发安全 Map 实现。
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/lyonnee/hmap"
+)
+
+func main() {
+	// 创建一个新的 SyncMap 实例
+	mySyncMap := hmap.NewSyncMap[string, int]()
+
+	// 存储键值对
+	mySyncMap.Store("key1", 1)
+	mySyncMap.Store("key2", 2)
+
+	// 查询 Map 的长度
+	length := mySyncMap.Len()
+	fmt.Printf("SyncMap Length: %d\n", length)
+
+	// 清空 Map
+	mySyncMap.Clean()
+
+	// 查询清空后的 Map 长度
+	length = mySyncMap.Len()
+	fmt.Printf("SyncMap Length after Clean: %d\n", length)
+}
+```
+
+## `Map` 和 `SyncMap` 的比较
+### Map
+- 优点：
+	- 使用互斥锁实现，简单直观。
+	- 适用于并发读写较少的场景。
+- 缺点：
+	-在高并发写入时，性能可能不如 SyncMap，因为互斥锁会导致写操作阻塞。
+### SyncMap
+- 优点：
+	- 使用 sync.Map 实现，适合高并发场景。
+	- 写操作不会阻塞读操作，性能更高。
+- 缺点：
+	- 实现相对复杂，代码量较大。
+	- 在低并发场景下，性能可能不如 Map。
 
 ## 方法
 
@@ -83,7 +137,7 @@ func main() {
 
 加载并删除指定键的值。
 
-### `Range(fn func(k any, v any) bool)`
+### `Range(fn func(k K, v V) bool)`
 
 遍历映射，对每个键值对执行指定的函数。
 
