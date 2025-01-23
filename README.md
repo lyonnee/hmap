@@ -10,6 +10,10 @@ HMap is a safe for concurrent generic map implementation in Go that provides a s
 
 </div>
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hmap)](https://goreportcard.com/report/github.com/lyonnee/hmap)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hmap)
+[![codecov](https://codecov.io/gh/lyonnee/hmap/graph/badge.svg?token=FU9T3QWBVJ)](https://codecov.io/gh/lyonnee/hmap)
+
 ## Features
 
 - **Generic Support:** Utilizes Go's generic features for flexibility with different types of key-value pairs.
